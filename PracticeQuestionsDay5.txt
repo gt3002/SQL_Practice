@@ -1,0 +1,214 @@
+Get the full name of each employee in uppercase.
+
+Get the length of each employee’s full name.
+
+Get only the domain part from each employee's email.
+
+Replace all dots in email addresses with underscores.
+
+Trim any leading or trailing spaces from first names.
+
+Find employees whose last name starts with 'S'.
+
+Find employees whose email contains 'example'.
+
+Return the first three letters of each first name.
+
+Find the position of '@' in each email. (hint: CHARINDEX)
+
+Concatenate first name and last name with a space in between.
+
+Find employees whose last name ends with 'a'.
+
+Get only the first name in lowercase.
+
+Get the number of characters in email addresses.
+
+Find employees with no email assigned.
+
+Replace the country code in phone numbers with just the number.
+
+Extract first name initials.
+
+Use PATINDEX to find the position of '@' in emails.(hint: PATINDEX('%@%', Email))
+
+Use REPLACE to remove all hyphens from phone numbers.
+
+Get last name reversed using REVERSE.
+
+Use LEFT and RIGHT to get first and last three characters of last names.
+
+Round off salaries to nearest 100.
+
+Get absolute value of salary differences from 70000.
+
+ABS()
+
+Get the square root of salaries
+SQRT()
+
+Get ceiling value of all salary entries.
+CEILING()
+
+Get floor value of all salary entries.
+FLOOR(Salary)
+
+Use POWER to square the salaries
+POWER(Salary, 2)
+
+-- 28. Use PI() to return the constant
+SELECT PI()
+
+Use RAND() to generate a random number per row
+hint :  SELECT RAND(CHECKSUM(NEWID())) AS RandomValue FROM Employees;
+
+
+
+Multiply salary by 1.10 (10% hike).
+
+Divide salary by 30 to get per day salary.
+
+Use POWER to calculate square of each salary.
+
+Get modulus of EmployeeID by 2.
+
+Find average salary of all employees.
+
+Find min, max, sum of salaries.
+
+Find employees with salary greater than average salary.
+
+Get rounded salary to 2 decimal places.
+
+Get year, month, day from DateOfJoining.
+
+Get only the name of the day (Monday, etc.).
+
+Find employees who joined in the last 3 years.
+
+Get number of days since each employee joined.
+
+Find who joined on a weekend.
+
+Add 100 days to the joining date.
+
+Subtract 100 days from the joining date.
+
+Use EOMONTH to get end of month for each joining date.
+
+Truncate date to the start of the year using DATETRUNC.
+
+Use DATEDIFF to find experience in years.
+
+Use DATEPART(quarter) to find quarter of joining.
+
+Get current date and time using GETDATE().
+
+Format date as dd-mm-yyyy.
+
+Use CONVERT to format DateOfJoining as mm/dd/yyyy.
+
+Use FORMAT(DateOfJoining, 'MMM yyyy').
+
+Get time difference in minutes between GETDATE() and DateOfJoining.
+
+Find employees who joined on same month as today.
+
+Show date in yyyy-MM-dd format.
+
+Extract only month name from DateOfJoining.
+
+Show first day of the joining month.
+
+Show last day of joining year.
+
+Find employees who joined in current year.
+
+Display joining date as dd MMMM, yyyy.
+
+Show month and year together (like 'March 2019').
+
+Show employees whose anniversary is today (match only day and month).
+
+Add 6 months to the joining date.
+
+Subtract 3 years from DateOfJoining.
+
+Use DATENAME to display weekday name of joining.
+
+Get ISO week number of joining date.
+
+Show full formatted string like: "Joined on 15th March, 2019 (Friday)"
+
+Convert salary to VARCHAR and append " INR".
+
+Convert DateOfJoining to string.
+
+Convert string "100.25" to decimal using CAST.
+
+Use CONVERT to get date in dd/mm/yyyy format.
+
+Convert NULL emails to "No Email Provided".
+
+Convert phone number to INT (what happens?).
+
+Cast EmployeeID to VARCHAR and concatenate with name.
+
+Convert date to datetime and add time '09:00:00'.
+
+Cast salary to INT and compare with original.
+
+Show difference between CAST and CONVERT.
+
+Count how many employees have NULL salary.
+
+Replace NULL phone numbers with 'N/A'.
+
+Use ISNULL(Salary, 0) to calculate total salaries.
+
+Use COALESCE(Email, 'No Email').
+
+Compare ISNULL vs COALESCE for multiple NULLs.
+
+Find employees with either NULL phone or NULL email.
+
+Use NULLIF(Salary, 0) and explain output.
+
+Use ISNULL to calculate average salary including NULLs.
+
+Show employees where Salary is NOT NULL.
+
+Return 'Missing' for NULL email when concatenating names.
+
+List employees with formatted string: "Rahul Sharma from Engineering earns 75K".
+
+Show all employees and their experience in complete years and months.
+
+Create a query that lists department-wise average salary.
+
+List employees who have been in the company more than average experience.
+
+Find out how many employees don’t have phone/email/salary.
+
+Show only employees who joined before 2020 and have NULL email.
+
+Format salary with commas (e.g., 75,000.50).
+
+Find employees with phone numbers containing '9876'.
+
+Display department name along with each employee.
+
+Show how many employees joined each quarter.
+
+Show first and last character of each last name.
+
+Display difference between LEN and DATALENGTH for names.
+
+Format joining date with month name and day (e.g., 15 March 2019).
+
+List employees whose names contain vowels only.
+
+Find employees who joined in the same month as today.
+
+Count number of characters in full name excluding spaces.
+
