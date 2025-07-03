@@ -1,0 +1,30 @@
+CREATE DATABASE Mydatabase;
+Use Mydatabase;
+
+CREATE TABLE persons(
+id INT NOT NULL,
+person_name VARCHAR(50) NOT NULL,
+birth_date DATE,
+phone_number VARCHAR(15) NOT NULL
+);
+
+ALTER TABLE persons
+ADD email VARCHAR(50) NOT NULL;
+
+SELECT * from persons;
+
+ALTER TABLE persons
+DROP COLUMN phone_number;
+
+DROP TABLE persons;
+
+SELECT 
+TABLE_NAME,
+CONSTRAINT_NAME
+FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS;
+
+
+ALTER TABLE Orders DROP CONSTRAINT FK__Orders__ProductI__3C69FB99;
+
+ALTER TABLE Orders ADD CONSTRAINT FK__Orders__ProductI__3C69FB99 FOREIGN KEY(ProductID) REFERENCES Products(ProductID)
+ON DELETE SET NULL;
