@@ -1,0 +1,54 @@
+
+List all unique employee names from both USA and UK.
+
+Get all unique employee IDs from both countries.
+
+Show distinct employee names who worked on either Project A or Project B.
+
+Retrieve all employee IDs who worked on either project, no duplicates.
+
+Combine all unique project names from both Project A and Project B.
+
+
+Get all employee names from USA and UK, including duplicates.
+
+List all employee IDs from Project A and Project B, even duplicates.
+
+Combine all project names from both tables without removing duplicates.
+
+Show all employee names from both countries, even if repeated.
+
+Retrieve all project assignments with duplication allowed.
+
+
+List employees who are in both USA and UK tables.
+
+Show employee IDs that are in both Project A and Project B.
+
+Find employee names common to both USA and UK.
+
+Retrieve employees who worked on both projects.
+
+Get project names common to both Project A and Project B.
+
+
+Find employees who are only in USA and not in UK.
+
+Get employees who worked only in Project A but not Project B.
+
+Show employees who are only in UK and not USA.
+
+Retrieve project names from Project B that are not in Project A.
+
+List employee IDs present in Project A but missing from Project B.
+
+
+Find names of employees who are in UK but not in USA, and also worked on Project B.
+
+Combine USA and UK employees, then filter only those who didn’t work on either project.
+
+Show all employees who worked on either project but exclude those in both countries.
+
+Get project names from both projects where at least one employee worked in both countries.
+
+Retrieve unique employee IDs across all four tables.
