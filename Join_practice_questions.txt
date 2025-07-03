@@ -1,0 +1,108 @@
+
+--List all orders with customer names and product names.
+
+Show each order with product price included.
+
+Find all customers who have placed at least one order.
+
+Show each product that has been ordered and by whom.
+
+Display all customers along with order dates and products they bought.
+
+
+List all customers and their orders (if any).
+
+Show customers who have not placed any orders.
+
+List all products and their order info (if ordered).
+
+Find products that have never been ordered.
+
+Get all orders and include customer info even if customer doesn't exist in Customers table.
+
+
+Show all orders with product details, even if the product doesn't exist in Products.
+
+Get all customers who placed orders, including products even if they are invalid.
+
+List all products and any order associated with them.
+
+Show which orders were made with missing customer info.
+
+
+List all customers and their orders, including customers and orders that don’t match.
+
+Show all orders and products whether matched or not.
+
+Display all unmatched customers and orders.
+
+Show unmatched products and their attempted orders.
+
+
+Show all possible combinations of customers and products.
+
+Display all product-customer combinations where country is 'USA'.
+
+Show cross join where price is above $500.
+
+Count total number of combinations between customers and products.
+
+🔹 SELF JOIN ideas (if extended schema)
+(Optional) Add manager field to Customers and find relationships.
+
+
+Find customers who have never ordered anything.
+
+List products never ordered.
+
+Show orders with invalid customers.
+
+Find orders with invalid product references.
+
+
+List customers who ordered ‘Laptop’.
+
+Show total quantity ordered for each product.
+
+Get customer names and total amount spent.
+
+Show each product with number of times ordered.
+
+Find customers with multiple orders.
+
+Show latest order for each customer.
+
+List all products with total revenue generated.
+
+Display all customers and their first order (if any).
+
+Find products ordered by customers from the UK.
+
+Show the most expensive product each customer has ordered.
+
+Show customers who ordered both ‘Phone’ and ‘Tablet’.
+
+Find which customer has spent the most.
+
+List customers who have placed more than 1 order.
+
+Count number of orders per country.
+
+Get product details for orders made in March 2023.
+
+Show all customers who ordered something after Feb 2023.
+
+List orders with quantities more than 1.
+
+Get total orders placed per customer with total quantity.
+
+Show customers and their average order value.
+
+Show all products with unit price above 700 and their orders.
+
+Retrieve all customers whose total spend exceeds $1500.
+
+List all orders where the quantity is not between 1 and 2.
+
+Show all customers who have either ordered nothing or ordered invalid products.
+
