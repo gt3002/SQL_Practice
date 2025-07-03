@@ -1,0 +1,84 @@
+
+Q1.
+Write a CTE to find customers from the "USA" and their order count.
+
+Q2.
+Find all customers who have placed an order of more than 1000 using a subquery in the WHERE clause.
+
+Q3.
+Use a subquery in the FROM clause to calculate the total amount spent by each customer.
+
+Q4.
+Use a subquery in the SELECT clause to fetch the number of orders placed by each customer.
+
+Q5.
+Write a CTE to get all orders placed after '2024-03-01' and then find their total sum.
+
+
+Q6.
+Write a CTE that finds each customer's first order date.
+
+Q7.
+Write a CTE and inside it, join customers with their orders, and then select those who have total spending > 1500.
+
+Q8.
+Find customers who have never placed an order (using subquery with NOT EXISTS).
+
+Q9.
+Use a scalar subquery in the SELECT to add the Average Order Amount for each customer.
+
+Q10.
+Create a CTE to list orders along with the number of items per order.
+
+
+Q11.
+Write a recursive CTE to generate a sequence of dates between '2024-01-01' and '2024-01-10'.
+
+Q12.
+Write a CTE to calculate cumulative total sales per customer based on order date (running total).
+
+Q13.
+Use a subquery to find products that were never ordered.
+
+Q14.
+Use a subquery to find customers who have more than 2 orders.
+
+Q15.
+Create a CTE that ranks products by how many times they were ordered.
+
+Q16.
+Write a query using a CTE to find top 2 customers who spent the most.
+
+Q17.
+Use a CTE + subquery to find, for each product, the maximum quantity ordered in a single order.
+
+Q18.
+Find all orders where the ordered product price was greater than the average product price.
+
+Q19.
+Write a query where:
+
+First CTE fetches customers and total orders.
+
+Second CTE fetches customers and total amount spent.
+
+Main query joins both CTEs.
+
+Q20.
+Find customers who ordered a Laptop using a subquery inside WHERE.
+
+
+Q21.
+Recursive CTE to find order dependency (Suppose orders that reference previous orders - can simulate).
+
+Q22.
+Write a CTE to calculate moving average of order amounts per customer based on order date.
+
+Q23.
+Find customers whose every order had an amount greater than 300 (using ALL in a subquery).
+
+Q24.
+Use EXISTS to find products that are included in at least one order.
+
+Q25.
+Find the customer(s) who placed the maximum total amount of orders (use subquery with aggregation).
