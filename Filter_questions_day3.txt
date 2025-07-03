@@ -1,0 +1,100 @@
+
+Find employees who are older than 30 and work in IT.
+
+Get all employees in HR or Marketing departments.
+
+Retrieve employees who are active and earn more than 60,000.
+
+List inactive employees in the Finance department.
+
+Find employees who are not in IT or HR.
+
+Get employees earning more than 70,000.
+
+List employees who are not in the Marketing department.
+
+Find employees hired before 2019.
+
+Show employees aged less than or equal to 30.
+
+List employees with a salary equal to 85000.
+
+Find employees with salary not equal to 50000.
+
+Show employees whose age is greater than 35.
+
+Find employees who were hired after 2021.
+
+Get employees where IsActive = 1.
+
+List employees where FirstName = 'Alice'.
+
+Find employees whose first name starts with 'A'.
+
+List employees whose last name ends with 'z'.
+
+Show employees whose first name contains 'an'.
+
+Find employees whose last name includes the letter 'e'.
+
+Get employees whose department name starts with 'F'.
+
+Retrieve employees whose first name does not contain 'i'.
+
+Find employees whose first name has 'o' as the second letter.
+
+Show employees whose last name is exactly 5 characters long.
+
+List employees whose names begin with ‘J’ and end with ‘a’.
+
+Get employees whose salary is between 60,000 and 90,000.
+
+Find employees aged between 30 and 40.
+
+Show employees hired between 2018-01-01 and 2021-12-31.
+
+Find employees with age not between 30 and 40.
+
+Get employees whose salary is not between 45000 and 80000.
+
+List employees in IT department with salary over 100,000.
+
+Find employees aged under 30 who are in HR.
+
+Get inactive employees hired before 2015.
+
+List active employees whose first name contains ‘e’.
+
+Find Finance employees earning more than 60,000 and active.
+
+Show Marketing employees not hired in 2022.
+
+Get employees hired after 2020 who are under 35 years old.
+
+Retrieve employees in HR or Finance with salary under 60,000.
+
+List employees with first name containing 'ia' and aged over 30.
+
+Find employees in IT or Marketing and salary above 80,000.
+
+Get employees hired between 2010 and 2020 and inactive.
+
+Show employees who are either in HR or have a salary over 100,000.
+
+List all employees except those in IT or with salary > 100,000.
+
+Retrieve active employees with even-numbered ages.
+
+Find employees whose last name includes both 'a' and 'z'.
+
+List employees hired before 2016 or after 2022.
+
+Show employees who joined on Valentine's Day.
+
+Find all employees whose salary is a round number (ends in 000).
+
+List employees in HR whose names start with 'F' or 'A'.
+
+Get employees aged 35 or above and not in Finance.
+
+Find employees with salary not in the range of 45k to 70k and hired after 2019.
