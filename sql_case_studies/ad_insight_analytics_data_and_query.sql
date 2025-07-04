@@ -271,7 +271,7 @@ order by avg(ranking);
 
 --15. Determine the five interests with the highest standard deviation in their `percentile_ranking`.
 select top 5 interest_id, round(STDEV(percentile_ranking),2) as std_deviation 
---into #high_std_interests
+into #high_std_interests
 from interest_metrics
 where interest_id is not null
 group by interest_id
@@ -335,6 +335,7 @@ from cte
 where rank_comp < 11
 order by month_year;
 
+
 --20. Among these top 10 interests, which interest appears most frequently?
 with cte as(
 select interest_id, count(interest_id) as interest_frequency
@@ -355,11 +356,29 @@ group by month_year;
 with cte as(
 select interest_id, imap.interest_name, month_year, composition
 from interest_metrics im join interest_map imap on im.interest_id = imap.id
-where month_year is not null and month_year between '2018-09-01' and '2019-08-01')
-
-select month_year, avg(composition) avg_comp
+where month_year is not null and month_year between '2018-09-01' and '2019-08-01'),
+cte1 as(
+select month_year, interest_id, interest_name, round(avg(composition),2) avg_comp
 from cte
-group by month_year
+group by month_year, interest_id, interest_name),
+
+cte2 as(
+select *, rank() over(partition by month_year order by avg_comp desc) rank_comp
+from cte1
+),
+cte3 as(
+select month_year, interest_id, interest_name, avg_comp
+from cte2 where rank_comp = 1
+),
+cte4 as(
+select month_year, interest_name, avg_comp as max_index_composition,
+round(avg(avg_comp) over(order by month_year rows between 2 preceding and current row),2) two_month_mov_avg,
+lag(interest_name + ': ' + avg_comp) over(order by month_year) one_month_ago,
+lag(interest_name, 2) over(order by month_year) two_months_ago
+from cte3
+)
+
+select * from cte4;
 
 
 --23. Provide a plausible explanation for the month-to-month changes in the top average composition. 
