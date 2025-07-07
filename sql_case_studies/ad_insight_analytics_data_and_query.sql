@@ -166,7 +166,7 @@ from interests)
 
 select interest_id, month_count as total_months, cumulative_dist
 from cum_dist
-where cumulative_dist >= 90
+where cumulative_dist > 90
 
 
 --10. If interests with `total_months` below this threshold are removed, how many records would be excluded?
