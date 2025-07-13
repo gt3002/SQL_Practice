@@ -144,9 +144,8 @@ group by category_name),
 cte2 as(
 select cast(sum(qty * price) as float) total_revenue from sales
 )
-
 select category_name, round(cast((revenue * 100/total_revenue) as float),2) as perc_split
-from cte,cte2
+from cte,cte2;
 
 --**9. What is the total transaction “penetration” for each product? 
 --(hint: penetration = number of transactions where at least 1 quantity of a product was
@@ -162,11 +161,14 @@ select product_name, ttl_txn /cast((select count(txn_id) from sales)as float) pe
 from cte;
 
 --**10. What is the most common combination of at least 1 quantity of any 3 products in a 1 single transaction?**
-s--select product_name, txn_id
+with cte as(
+select txn_id, product_name, count(txn_id) cc
 from product_details pd join sales s
 on pd.product_id = s.prod_id
-group by txn_id,product_name
-order by txn_id, product_name
+group by txn_id, product_name)
+select *
+from cte c1 join cte c2 on c1.txn_id = c2.txn_id
+
 
 --## 📝 Reporting Challenge
 
