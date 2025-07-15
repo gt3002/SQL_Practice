@@ -448,8 +448,64 @@ select a.Title, (total_track_time_ms/60000) as track_time_in_minutes
 from cte c join Album a on c.AlbumId = a.AlbumId;
 
 --•	Get top 5 albums by total revenue using CTE and window functions.
-
+with cte as(
+select AlbumId, sum(il.unitprice * quantity) total_revenue
+from Track t left join InvoiceLine il on t.TrackId = il.TrackId
+group by AlbumId)
+select top 5 a.Title, total_revenue, row_number() over(order by total_revenue desc) as rnk
+from cte c join Album a on  c.AlbumId = a.AlbumId
 
 --•	Use CTE to find average track price per genre and filter only those above global average.
+with cte as(
+select GenreId, AVG(UnitPrice) avg_price
+from Track t
+group by GenreId)
+select g.Name as Genre, avg_price
+from cte c join Genre g on c.GenreId = g.GenreId
+where avg_price > (select avg(unitprice) from Track)
+
 --•	CTE to find customers with the longest names.
+with cte as(
+select (c.FirstName + ' ' + c.LastName) customer_name
+from Customer c),
+cte1 as(
+select customer_name, len(customer_name) name_length,
+rank() over(order by len(customer_name) desc) rnk
+from cte)
+select customer_name as [customer with longest name], name_length
+from cte1 where rnk = 1;
+
 --•	Create a CTE to rank all albums by number of tracks.
+with cte as(
+select AlbumId, count(trackid) num_of_tracks
+from track
+group by AlbumId)
+select * , dense_rank() over(order by num_of_tracks desc) rnk_album
+from cte;
+
+--Advanced Analytics
+--•	Get month-over-month revenue change.
+with cte as(
+select year(InvoiceDate) [Year], month(InvoiceDate) [Month], sum(total) total_revenue
+from Invoice
+group by year(InvoiceDate), month(InvoiceDate))
+select Year, month, total_revenue,
+lag(total_revenue) over(order by year, month) as previous_month_revenue,
+((total_revenue-lag(total_revenue) over(order by year, month)) * 100/lag(total_revenue) over(order by year, month)) mom_change_percentage
+from cte
+order by year, month
+
+--•	Calculate customer lifetime value.
+select CustomerId, Total, InvoiceDate
+from invoice
+order by CustomerId, InvoiceDate
+
+--•	Get retention: how many customers returned for a second purchase?
+--•	Identify top selling track in each country.
+--•	Show invoice trends by quarter.
+--•	Count customers acquired per year.
+--•	Find churned customers (no purchases in last 12 months).
+--•	Show most played tracks per user (using playlist track if usage data is simulated).
+--•	Simulate cohort analysis by signup month.
+--•	Calculate total revenue per artist using joins and group by.
+
