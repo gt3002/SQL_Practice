@@ -496,16 +496,180 @@ from cte
 order by year, month
 
 --•	Calculate customer lifetime value.
-select CustomerId, Total, InvoiceDate
-from invoice
-order by CustomerId, InvoiceDate
+select customerid,
+sum(total) / count(distinct month(InvoiceDate)) AS avg_monthly_revenue
+from Invoice
+group by customerid;
 
 --•	Get retention: how many customers returned for a second purchase?
---•	Identify top selling track in each country.
---•	Show invoice trends by quarter.
---•	Count customers acquired per year.
---•	Find churned customers (no purchases in last 12 months).
---•	Show most played tracks per user (using playlist track if usage data is simulated).
---•	Simulate cohort analysis by signup month.
---•	Calculate total revenue per artist using joins and group by.
+select count(customerid) as num_of_customers_made_2nd_purchase from (
+select customerid, count(InvoiceId) num_of_purchase
+from Invoice
+group by CustomerId
+having count(InvoiceId) > 1) as customer_purchase_count
 
+--•	Identify top selling track in each country.
+with cte as(
+select i.BillingCountry, t.trackid, t.name, sum(il.UnitPrice * il.Quantity) total_sales
+from invoice i join InvoiceLine il on i.InvoiceId =  il.InvoiceId
+join Track t on t.TrackId = il.TrackId
+group by BillingCountry, t.TrackId, t.Name)
+select BillingCountry, Name, total_sales from (
+select *, row_number() over(partition by billingcountry order by total_sales desc) as rank_sales
+from cte) country_sales_rnk
+where rank_sales = 1
+
+--•	Show invoice trends by quarter.
+select year(InvoiceDate), datepart(QUARTER, InvoiceDate) invoice_quarter,
+count(InvoiceId) invoice_count, sum(total) total_sales
+from Invoice
+group by year(InvoiceDate), datepart(QUARTER, InvoiceDate)
+order by year(InvoiceDate), total_sales;
+
+--•	Count customers acquired per year.
+select year(invoicedate) invoice_year, count(distinct CustomerId) customer_acquired
+from invoice
+group by year(invoicedate);
+
+--•	Find churned customers (no purchases in last 12 months).
+with cte as(
+select customerid, max(invoicedate) last_purchase_date from(
+select InvoiceId, CustomerId, InvoiceDate
+from invoice) customer_invoice_info
+group by CustomerId)
+select CustomerId as churned_customer_id, format(last_purchase_date, 'yyyy-MMM') last_purchased_month
+from cte
+where datediff(MONTH, last_purchase_date, GETDATE()) >= 12;
+
+--•	Show most played tracks per user (using playlist track if usage data is simulated).
+with cte as(
+select i.CustomerId, il.InvoiceId, pt.TrackId, t.Name, pt.PlaylistId
+from Invoiceline il left join Invoice i on il.InvoiceId = i.InvoiceId
+left join track t on t.TrackId = il.TrackId
+left join PlaylistTrack pt on pt.TrackId = il.TrackId
+--order by CustomerId, pt.PlaylistId, pt.TrackId
+)
+select customerid, track_name, num_of_times_played from(
+select customerid, name as track_name, num_of_times_played, 
+rank() over(partition by customerid order by num_of_times_played desc) rnk from(
+select customerid, TrackId, Name, count(*) num_of_times_played
+from cte 
+group by CustomerId, TrackId, Name) as customer_played_track_count) as rnk_tracks
+where rnk = 1
+
+--•	Simulate cohort analysis by signup month.
+with cte as(
+select customerid, year(min(invoicedate)) year_of_month, DATENAME(MONTH, (min(invoicedate))) signup_month
+from Invoice
+group by CustomerId)
+select year_of_month, signup_month, count(customerid) num_of_customers_acquired
+from cte
+group by year_of_month, signup_month
+order by year_of_month
+
+
+--•	Calculate total revenue per artist using joins and group by.
+select a.ArtistId, a.Name, isnull(sum(il.Quantity * il.UnitPrice), 0) total_revenue
+from Artist a left join Album al on a.ArtistId  = al.ArtistId
+left join track t on t.AlbumId = al.AlbumId
+left join InvoiceLine il on t.TrackId = il.TrackId
+group by a.artistid, a.Name
+order by a.ArtistId
+
+--Data Validation and Integrity Checks
+--•	Find invoice lines with NULL unit price.
+select * from InvoiceLine where UnitPrice is null;
+
+--•	Detect duplicate tracks (by name, album, duration).
+select Name as duplicateTrackName, AlbumId, count(TrackId) cnt
+from Track
+group by Name, AlbumId--, Milliseconds
+having count(trackid) > 1
+
+--***there is no duplicate track if we see the duration too along with name and album
+
+--•	List tracks with unit price < 0.
+select trackid, Name, UnitPrice
+from Track
+where UnitPrice < 0;
+
+--•	Find customers with missing emails.
+select customerid, (FirstName + ' ' + LastName) customer_name
+from Customer 
+where Email is null or Email = ''
+
+--•	Check for invoices without invoice lines.
+select i.*, il.InvoiceLineId
+from Invoice i left join InvoiceLine il on i.InvoiceId = il.InvoiceId
+where i.InvoiceId is null
+
+--•	Validate if total in invoices match the sum of invoice lines.
+select i.invoiceid, sum(il.Quantity * il.UnitPrice) invoice_line_total, i.Total invoice_total
+from Invoice i join InvoiceLine il on i.InvoiceId = il.InvoiceId
+group by i.invoiceid, i.Total
+
+--•	Find tracks assigned to multiple genres (data anomaly).
+select TrackId, GenreId, count(distinct GenreId)
+from track
+group by TrackId, GenreId
+having count(distinct GenreId) >1
+
+--•	Check for albums without artists.
+select *
+from Album
+where ArtistId is null or ArtistId = '';
+
+--•	List employees who support more than 20 customers.
+select e.EmployeeId, (e.firstname + ' '+ e.lastname) emp_name, count(c.CustomerId) support_customers_count
+from Employee e join Customer c on e.EmployeeId = c.SupportRepId
+group by EmployeeId, e.firstname, e.lastname
+having count(c.CustomerId) > 20
+
+--•	Show customers who have the same first and last names.
+select CustomerId, FirstName, LastName
+from Customer c where 
+FirstName in (select firstname from Customer c1 where c1.CustomerId != c.CustomerId) and
+LastName in (select lastname from Customer c2 where c2.CustomerId != c.CustomerId);
+
+--Business Scenarios
+--•	Recommend top 3 tracks for a customer based on genre preference. ****
+with cte as(
+select i.CustomerId, t.GenreId, t.TrackId
+from Invoice i join invoiceline il on i.InvoiceId = il.InvoiceId
+join track t on t.TrackId = il.TrackId),
+--order by CustomerId
+cte1 as(
+select CustomerId, GenreId from(
+select CustomerId, GenreId,row_number() over(partition by customerid order by count(genreid) desc) rnk_genre
+from cte
+group by CustomerId,GenreId) rnk_genre
+where rnk_genre < 4),
+cte2 as(
+select t.TrackId, t.name, t.GenreId, sum(il.UnitPrice * il.Quantity) total_sales
+from InvoiceLine il join track t on il.TrackId = t.TrackId
+group by t.TrackId, t.name, t.GenreId
+),
+cte3 as(
+select c1.CustomerId, c2.TrackId, c2.Name, c2.total_sales,
+ROW_NUMBER() over(partition by customerid order by total_sales desc) rnk_track
+from cte1 c1 join cte2 c2 on c1.GenreId = c2.genreid
+where c2.TrackId not in(select TrackId from cte where cte.CustomerId = c1.CustomerId)
+)
+
+select CustomerId, name as track_name, total_sales
+from cte3
+where rnk_track < 4;
+
+
+
+--•	Identify slow-moving tracks (not sold in last 12 months).
+
+
+--•	Get summary of purchases per customer per genre.
+--•	Find the artist with highest average track duration.
+--•	Show difference in price between highest and lowest track per genre.
+--•	Find customers who buy only once vs those who buy multiple times.
+--•	List countries with the most revenue per capita (assume fixed population per country).
+--•	Recommend albums with similar genre to customer past purchases.
+--•	Estimate revenue impact if top 10% customers churn.
+--•	Calculate the average invoice total per support rep’s customer group.
