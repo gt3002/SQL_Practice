@@ -547,7 +547,7 @@ select i.CustomerId, il.InvoiceId, pt.TrackId, t.Name, pt.PlaylistId
 from Invoiceline il left join Invoice i on il.InvoiceId = i.InvoiceId
 left join track t on t.TrackId = il.TrackId
 left join PlaylistTrack pt on pt.TrackId = il.TrackId
---order by CustomerId, pt.PlaylistId, pt.TrackId
+order by CustomerId, pt.PlaylistId, pt.TrackId
 )
 select customerid, track_name, num_of_times_played from(
 select customerid, name as track_name, num_of_times_played, 
@@ -655,21 +655,112 @@ ROW_NUMBER() over(partition by customerid order by total_sales desc) rnk_track
 from cte1 c1 join cte2 c2 on c1.GenreId = c2.genreid
 where c2.TrackId not in(select TrackId from cte where cte.CustomerId = c1.CustomerId)
 )
-
-select CustomerId, name as track_name, total_sales
+select CustomerId, trackid, name as track_name, total_sales
 from cte3
 where rnk_track < 4;
 
-
-
 --•	Identify slow-moving tracks (not sold in last 12 months).
-
+select t.TrackId, t.Name, format(i.InvoiceDate, 'yyyy-MMMM') last_sold_month
+from invoice i join invoiceline il on i.InvoiceId = il.InvoiceId
+join track t on t.TrackId = il.TrackId
+where DATEDIFF(month, i.InvoiceDate, GETDATE()) > 12
+order by TrackId
 
 --•	Get summary of purchases per customer per genre.
+select i.CustomerId, t.GenreId, count(t.TrackId) num_of_tracks_purchased, sum(il.Quantity * il.UnitPrice) total_spent
+from Invoice i join InvoiceLine il on i.InvoiceId = il.InvoiceId
+join Track t on t.TrackId = il.TrackId
+group by CustomerId, GenreId
+order by CustomerId, GenreId
+
 --•	Find the artist with highest average track duration.
+select top 1 ar.ArtistId, ar.name, avg(t.Milliseconds) avg_track_duration
+from Track t join Album a on a.AlbumId = t.AlbumId
+join Artist ar on ar.ArtistId = a.ArtistId
+group by ar.ArtistId, ar.Name
+order by avg_track_duration desc
+
 --•	Show difference in price between highest and lowest track per genre.
+with cte as(
+select GenreId, min(UnitPrice) lowest_price, max(unitprice) highest_price
+from Track
+group by GenreId)
+select g.Name as GenreName, highest_price, lowest_price, (highest_price - lowest_price) diff_in_price
+from cte c join Genre g on c.GenreId = g.GenreId
+
 --•	Find customers who buy only once vs those who buy multiple times.
+with cte as(
+select CustomerId, count(*) num_of_purchase
+from invoice
+group by CustomerId)
+select 
+case when num_of_purchase = 1 then (c.FirstName + ' ' + c.LastName) end as customer_purchased_once,
+case when num_of_purchase > 1 then (c.FirstName + ' ' + c.LastName) end as customer_purchased_multiple_times
+from cte c1 join Customer c on c1.CustomerId = c.CustomerId
+
 --•	List countries with the most revenue per capita (assume fixed population per country).
+---***let us take 100 as a fixed population per country
+select BillingCountry as Country, count(CustomerId) customer_count,
+sum(total) total_revenue, sum(total) * 1.0 / 100 revenue_per_capita
+from Invoice 
+group by BillingCountry
+order by total_revenue desc
+
 --•	Recommend albums with similar genre to customer past purchases.
+with cte as(
+select distinct i.CustomerId, t.GenreId, t.AlbumId
+from invoice i join InvoiceLine il on i.InvoiceId = il.InvoiceId
+join Track t on t.TrackId = il.TrackId
+),
+cte1 as(
+select distinct GenreId, AlbumId
+from track),
+
+album_not_bought as(
+select distinct cte.CustomerId, cte1.GenreId, cte1.AlbumId
+from cte1 join cte on cte1.GenreId = cte.GenreId and cte.AlbumId != cte1.AlbumId),
+
+top_albums as(
+select GenreId, AlbumId from(
+select distinct ab.GenreId, ab.AlbumId, rank() over(partition by ab.genreid order by sum(Quantity* il.UnitPrice) desc) rnk_album
+from album_not_bought ab join Track t on ab.AlbumId = t.AlbumId and ab.GenreId = t.GenreId
+join InvoiceLine il on t.TrackId = il.TrackId
+group by ab.GenreId, ab.AlbumId) as top_albums
+where rnk_album = 1)
+
+select CustomerId, g.Name as Genre, a.Title
+from album_not_bought ab join Album a on ab.AlbumId = a.AlbumId
+join Genre g on ab.GenreId = g.GenreId
+where ab.GenreId in(select GenreId from top_albums)
+and ab.AlbumId in (select AlbumId from top_albums)
+
 --•	Estimate revenue impact if top 10% customers churn.
+with cte as(
+select CustomerId, sum(total) revenue_per_customer
+from invoice
+group by CustomerId),
+--order by revenue_per_customer desc
+cte1 as(
+select sum(revenue_per_customer) revenue_from_top10_customers from(
+select CustomerId, revenue_per_customer, NTILE(10) over(order by revenue_per_customer desc) rnk
+from cte) as top_customers
+where rnk = 1)
+
+select sum(revenue_per_customer) total_revenue, revenue_from_top10_customers
+from cte, cte1
+group by revenue_from_top10_customers;
+
 --•	Calculate the average invoice total per support rep’s customer group.
+with cte as(
+select c.SupportRepId, avg(i.Total) avg_invoice_total
+from Customer c join Invoice i on c.CustomerId = i.CustomerId
+group by c.SupportRepId)
+select c.SupportRepId, (e.FirstName + ' ' + e.LastName) SupportRepName, avg_invoice_total
+from cte c join Employee e on c.SupportRepId = e.EmployeeId
+
+--Bonus / Optional
+--•	Create a view for customer invoices with aggregated total.
+--•	Write a stored procedure to get top customers by year.
+--•	Simulate insertion of a new invoice using INSERT + SELECT.
+--•	Write a function to return total revenue for an artist.
+--•	Use a trigger to prevent deleting a customer with invoices.
